@@ -1,5 +1,11 @@
 <script>
+	import { collection, query, orderBy, limit } from 'firebase/firestore';
+	import { DateTime } from 'luxon';
+	import { Collection, getFirebaseContext } from 'sveltefire';
+	
 	export let data;
+
+	const { firestore } = getFirebaseContext();
 </script>
 
 <div class="text-center">
@@ -17,59 +23,66 @@
 	The Social Policy Research Foundation - Bangladesh (SPRF-BD) is proposed to be established as a non-profit organization dedicated to advancing research, analysis, and advocacy in the field of social policy, exclusively focusing on the unique challenges and opportunities within Bangladesh. This proposal outlines the key components, objectives, and strategies for the establishment and operation of SPRF-BD. 
 </p>
 
-<div class="text-4xl font-semibold pb-4 pt-8">Recent publications</div>
-<div class="grid grid-cols-3 justify-items-center items-center">
-	{#each data.props.papers as paper}
-		<a href={paper.link} class="card border-t-4 border-t-orange-600 w-80 h-96">
-			<div class="h-full p-4 gap-3 flex flex-col justify-between divide-y divide-slate-600">
-				<h4 class="h4">{paper.title}</h4>
-				<div class=" flex flex-col gap-1">
-					<p>{paper.authors}</p>
-					<p class=" font-light">{paper.published}</p>
-					<button type="button" class="btn variant-filled">Read Paper</button>
+{#if firestore}
+	<Collection ref={query(collection(firestore, "research"), orderBy("date", "desc"), limit(2))} let:data={papers} let:count>
+		<div class="text-4xl font-semibold pb-4 pt-8">Recent publications</div>
+		<div class="grid grid-cols-3 justify-items-center items-center">
+			{#each papers as paper}
+			<a href={paper.link} class="card border-t-4 border-t-orange-600 w-80 h-96">
+				<div class="h-full p-4 gap-3 flex flex-col justify-between divide-y divide-slate-600">
+					<h4 class="h4">{paper.title}</h4>
+					<div class=" flex flex-col gap-1">
+						<p>{paper.author}</p>
+						<p class=" font-light">{DateTime.fromMillis(paper.date.seconds * 1000).toFormat('LLLL yyyy')}</p>
+						<button type="button" class="btn variant-filled">Read Paper</button>
+					</div>
 				</div>
-			</div>
-		</a>
-	{/each}
-    
-	<a href="/Research">
-		<button class="btn variant-filled">
-			Read Other Research Papers
-
-		</button>
-		<div>
+			</a>
+			{/each}
+			
+			<a href="/Research">
+				<button class="btn variant-filled">
+					Read Other Research Papers
+					
+				</button>
+				<div>
+				</div>
+			</a>
+			
 		</div>
-	</a>
+	</Collection>
+		
+	<Collection ref={query(collection(firestore, "blogs"), orderBy("date", "desc"), limit(2))} let:data={blogs} let:count>
+		<div class="text-4xl font-semibold pb-4 pt-8">Blog</div>
+		<div class="grid grid-cols-3 gap-y-6 justify-items-center items-center">
+			{#each blogs as blog}
+				<a href={blog.slug} class="card border-t-4 border-t-orange-600 w-80 h-96">
+					<img class=" h-2/5 w-full" src={blog.image} alt="">
+					<div class="p-4 flex flex-col gap-3 justify-between h-3/5">
+						<div>
+							<h4 class="h4 line-clamp-3">{blog.title}</h4>
+						</div>
+						<div class="flex flex-col gap-1">
+							<p>{blog.author}</p>
+							<p class=" font-light">{DateTime.fromMillis(blog.date.seconds * 1000).toLocaleString(DateTime.DATE_FULL)}</p>
+							<button type="button" class="btn variant-filled">Read Paper</button>
+						</div>
+					</div>
+				</a>
+			{/each}
+			<a href="/Blog">
+				<button class="btn variant-filled">
+					Read Other Blogs
 
-</div>
-
-<div class="text-4xl font-semibold pb-4 pt-8">Blog</div>
-<div class="grid grid-cols-3 gap-y-6 justify-items-center items-center">
-    {#each data.props.blogs as blog}
-        <a href={blog.slug} class="card border-t-4 border-t-orange-600 w-80 h-96">
-            <img class=" h-2/5 w-full" src={blog.image} alt="">
-            <div class="p-4 flex flex-col gap-3 justify-between h-3/5">
-                <div>
-                    <h4 class="h4 line-clamp-3">{blog.title}</h4>
-                </div>
-                <div class="flex flex-col gap-1">
-                    <p>{blog.author}</p>
-                    <p class=" font-light">{blog.date}</p>
-                    <button type="button" class="btn variant-filled">Read Paper</button>
-                </div>
-            </div>
-        </a>
-    {/each}
-	<a href="/Blog">
-		<button class="btn variant-filled">
-			Read Other Blogs
-
-		</button>
-		<div>
+				</button>
+				<div>
+				</div>
+			</a>
 		</div>
-	</a>
-</div>
-<div class="text-4xl font-semibold pb-4 pt-8">News</div>
+	</Collection>
+{/if}
+
+	<div class="text-4xl font-semibold pb-4 pt-8">News</div>
 <div>
     {#each data.props.blogs as blog}
         <a href={blog.slug} class="card border-t-4 border-t-orange-600 w-80 h-96">
