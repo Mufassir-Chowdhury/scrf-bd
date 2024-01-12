@@ -1,4 +1,4 @@
-<div class="text-4xl font-semibold pb-4">Contact Us</div>
+<div class="header">Contact Us</div>
 
 <h3 class="h3">Our Address:</h3>
 

@@ -1,6 +1,6 @@
 <script>
+	import Card from '$lib/Card.svelte';
 	import { collection, query, orderBy, limit } from 'firebase/firestore';
-	import { DateTime } from 'luxon';
 	import { Collection, getFirebaseContext } from 'sveltefire';
 	
 	export let data;
@@ -10,79 +10,51 @@
 
 <div class="text-center">
 	<h1 class="h1">
-		<span class="bg-gradient-to-br from-blue-500 to-cyan-300 bg-clip-text text-transparent box-decoration-clone">Social policy</span>
+		<span class="bg-gradient-to-br from-blue-500 to-cyan-300 bg-clip-text text-transparent box-decoration-clone">Center for</span>
 	</h1>
 	<h1 class="h1">
-		<span class="bg-gradient-to-br from-red-500 to-yellow-500 bg-clip-text text-transparent box-decoration-clone"> and Justice </span>
+		<span class="bg-gradient-to-br from-red-500 to-yellow-500 bg-clip-text text-transparent box-decoration-clone"> Social Policy </span>
 	</h1>
 	<h1 class="h1">
-		<span class="bg-gradient-to-br from-pink-500 to-violet-500 bg-clip-text text-transparent box-decoration-clone">Foundation</span>
+		<span class="bg-gradient-to-br from-pink-500 to-violet-500 bg-clip-text text-transparent box-decoration-clone">and justice</span>
 	</h1>
 </div>
 <p class="py-4">
-	The Social Policy Research Foundation - Bangladesh (SPRF-BD) is proposed to be established as a non-profit organization dedicated to advancing research, analysis, and advocacy in the field of social policy, exclusively focusing on the unique challenges and opportunities within Bangladesh. This proposal outlines the key components, objectives, and strategies for the establishment and operation of SPRF-BD. 
+	The Center for Social Policy and Justice (CSP-Justice) is proposed to be established as a non-profit organization dedicated to advancing research, analysis, and advocacy in the field of social policy, exclusively focusing on the unique challenges and opportunities within Bangladesh. This proposal outlines the key components, objectives, and strategies for the establishment and operation of CSP-Justice. 
 </p>
 
 {#if firestore}
 	<Collection ref={query(collection(firestore, "research"), orderBy("date", "desc"), limit(2))} let:data={papers} let:count>
-		<div class="text-4xl font-semibold pb-4 pt-8">Recent publications</div>
-		<div class="grid grid-cols-3 justify-items-center items-center">
+		<div class="header">Recent publications</div>
+		<div class="card-grid">
 			{#each papers as paper}
-			<a href={paper.link} class="card border-t-4 border-t-orange-600 w-80 h-96">
-				<div class="h-full p-4 gap-3 flex flex-col justify-between divide-y divide-slate-600">
-					<h4 class="h4">{paper.title}</h4>
-					<div class=" flex flex-col gap-1">
-						<p>{paper.author}</p>
-						<p class=" font-light">{DateTime.fromMillis(paper.date.seconds * 1000).toFormat('LLLL yyyy')}</p>
-						<button type="button" class="btn variant-filled">Read Paper</button>
-					</div>
-				</div>
-			</a>
+				<Card link={paper.link}  title={paper.title} author={paper.author} date={paper.date} />
 			{/each}
-			
-			<a href="/Research">
-				<button class="btn variant-filled">
+			<a href="/Research" class="w-full md:col-span-2 lg:col-span-1">
+				<button class="btn variant-filled my-8 w-full ">
 					Read Other Research Papers
-					
 				</button>
-				<div>
-				</div>
 			</a>
-			
 		</div>
 	</Collection>
 		
 	<Collection ref={query(collection(firestore, "blogs"), orderBy("date", "desc"), limit(2))} let:data={blogs} let:count>
-		<div class="text-4xl font-semibold pb-4 pt-8">Blog</div>
-		<div class="grid grid-cols-3 gap-y-6 justify-items-center items-center">
+		<div class="header">Blog</div>
+		<div class="card-grid">
 			{#each blogs as blog}
-				<a href={blog.slug} class="card border-t-4 border-t-orange-600 w-80 h-96">
-					<img class=" h-2/5 w-full" src={blog.image} alt="">
-					<div class="p-4 flex flex-col gap-3 justify-between h-3/5">
-						<div>
-							<h4 class="h4 line-clamp-3">{blog.title}</h4>
-						</div>
-						<div class="flex flex-col gap-1">
-							<p>{blog.author}</p>
-							<p class=" font-light">{DateTime.fromMillis(blog.date.seconds * 1000).toLocaleString(DateTime.DATE_FULL)}</p>
-							<button type="button" class="btn variant-filled">Read Paper</button>
-						</div>
-					</div>
-				</a>
+				<Card link={blog.slug} image={blog.image} title={blog.title} author={blog.author} date={blog.date} />
 			{/each}
-			<a href="/Blog">
-				<button class="btn variant-filled">
+			<a href="/Blog" class="w-full md:col-span-2 lg:col-span-1">
+				<button class="btn variant-filled  my-8 w-full ">
 					Read Other Blogs
 
 				</button>
-				<div>
-				</div>
 			</a>
 		</div>
 	</Collection>
 {/if}
 
-	<div class="text-4xl font-semibold pb-4 pt-8">News</div>
+<div class="header">News</div>
 <div>
     {#each data.props.blogs as blog}
         <a href={blog.slug} class="card border-t-4 border-t-orange-600 w-80 h-96">

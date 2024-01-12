@@ -3,7 +3,7 @@
 </script>
 
 <main class="w-full">
-    <div class="text-4xl font-semibold">People</div>
+    <div class="header">People</div>
     <section class="divide-y">   
         {#each data.props.people as person}
             <div class="py-8 flex flex-col md:flex-row items-center">

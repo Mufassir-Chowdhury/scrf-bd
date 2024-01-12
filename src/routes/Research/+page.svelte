@@ -3,7 +3,7 @@
 	import { Collection } from "sveltefire";
 </script>
 
-<div class="text-4xl font-semibold pb-4">Research</div>
+<div class="header">Research</div>
 
 <Collection ref="research" let:data={papers} let:count>
     <dl class="list-nav">
